@@ -26,12 +26,100 @@ namespace ATM.Client
             var bobrossrtx = new Account(bank, "password", "bobrossrtx");
             var jeremy = new Account(bank, "12345", "jeremy");
 
-            var cash = 200.00m;
-            bobrossrtx.DepositMoney(cash);
+            //var cash = 200.00m;
+            //bobrossrtx.DepositMoney(cash);
 
-            bobrossrtx.TransferMoney(jeremy, 10.50m);
-            bobrossrtx.GetBalance();
-            jeremy.GetBalance();
+            //bobrossrtx.TransferMoney(jeremy, 10.50m);
+            //bobrossrtx.GetBalance();
+            //jeremy.GetBalance();
+
+            // Interface
+            while (true)
+            {
+                // Print Banner
+                Console.WriteLine("------------------------");
+                Console.WriteLine("    ATM - Bobrossrtx    ");
+                Console.WriteLine("------------------------");
+
+                // Login
+                bool loggedIn = false;
+
+                Console.WriteLine("Login:");
+                Console.Write(" Account Number: ");
+                string accountNumberString = Console.ReadLine();
+                Account account = new Account();
+                Guid accountNumber;
+                Guid x;
+
+                if (Guid.TryParse(accountNumberString, out x))
+                {
+                    accountNumber = Guid.Parse(accountNumberString);
+                    Console.Write(" Password: ");
+                    string password = Console.ReadLine();
+                    account = bank.FindAccount(accountNumber);
+                    loggedIn = account.Login(accountNumber, password);
+                }
+                else loggedIn = false;
+
+
+                if (loggedIn)
+                {
+                    Console.WriteLine($"Logged in as {account.Username}");
+
+                optionsInterface:
+                    // Print Options
+                    Console.WriteLine("(1) - Deposit    (4) - Transfer");
+                    Console.WriteLine("(2) - Withdraw");
+                    Console.WriteLine("(3) - Balance    (0) - Exit");
+
+                    Console.Write("> ");
+                    string input = Console.ReadLine();
+
+                    decimal ammount = 0;
+
+                    switch (input)
+                    {
+                        case "1":
+                            Console.Write("Enter Ammount: ");
+                            ammount = Convert.ToDecimal(Console.ReadLine());
+                            account.DepositMoney(ammount);
+                            goto optionsInterface;
+
+                        case "2":
+                            Console.Write("Enter Ammount: ");
+                            ammount = Convert.ToDecimal(Console.ReadLine());
+                            account.WithdrawMoney(ammount);
+                            goto optionsInterface;
+
+                        case "3":
+                            account.GetBalance();
+                            goto optionsInterface;
+
+                        case "4":
+                            Console.Write("Account Number: ");
+                            string transferAccountNumberString = Console.ReadLine();
+                            Account transferAccount = new Account();
+                            Guid z;
+
+                            if (Guid.TryParse(transferAccountNumberString, out z))
+                            {
+                                transferAccount = bank.FindAccount(Guid.Parse(transferAccountNumberString));
+                                if (transferAccount is null) goto optionsInterface;
+                                Console.Write("Enter Ammount: ");
+                                ammount = Convert.ToDecimal(Console.ReadLine());
+                                account.TransferMoney(transferAccount, ammount);
+                            }
+                            else Console.WriteLine("Invalid Account Number");
+                            goto optionsInterface;
+
+                        case "0":
+                            break;
+                        default:
+                            goto optionsInterface;
+                    }
+                }
+                else Console.WriteLine("Invalid Credentials");
+            }
         }
     }
 }

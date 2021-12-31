@@ -46,6 +46,17 @@ namespace ATM.Client
             }
         }
 
+        public Account FindAccount(Guid accountNumber)
+        {
+            foreach (var account in Accounts)
+            {
+                if (account.AccountNumber == accountNumber)
+                    return account;
+            }
+            Console.WriteLine("No account found");
+            return null;
+        }
+
         /**
          * type:
          *  - 1     = deposit

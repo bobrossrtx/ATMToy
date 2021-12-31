@@ -28,6 +28,9 @@ namespace ATM.Client
         public Money Balance { get; private set; }
         private Bank _bank { get; init; }
 
+        // Dummy Constructor
+        public Account() { }
+
         public Account(Bank bank, string password, string username)
         {
             this.Password = password;
@@ -49,8 +52,16 @@ namespace ATM.Client
         public void DepositMoney(decimal ammount)
         {
             Balance.Value += ammount;
-            Console.WriteLine($"Successfully deposited {_bank.Currency}{ammount} into bank.");
+            Console.WriteLine($"Successfully deposited {_bank.Currency}{ammount} into bank account.");
             _bank.UpdateTotalValue(this, 1, ammount);
+        }
+
+        public decimal WithdrawMoney(decimal ammount)
+        {
+            Balance.Value -= ammount;
+            Console.WriteLine($"Successfully withdrew {_bank.Currency}{ammount} from bank account.");
+            _bank.UpdateTotalValue(this, 2, ammount);
+            return ammount;
         }
 
         public bool SetPassword(string password, string oldPassword)
@@ -77,8 +88,8 @@ namespace ATM.Client
 
         public bool Login(Guid accountNumber, string password)
         {
-            if (!(accountNumber == AccountNumber&& password == Password)) LoggedIn = false;
-            LoggedIn = true;
+            if (accountNumber == AccountNumber && password == Password) LoggedIn = true;
+            else LoggedIn = false;
             return LoggedIn;
         }
 
